@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Main container */
+.container {
+    background: blue;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    width: 300px;
+}
+
+
+
+h1, h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Inputs and select */
+input[type="text"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* Radio buttons */
+.radio-group {
+    margin: 10px 0;
+}
+
+.radio-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 10px;
+    background: #007BFF;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
