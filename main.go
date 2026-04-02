@@ -7,10 +7,21 @@ import (
 	"text/template"
 )
 
-var templates = template.Must(template.ParseFiles("templates/ascii-art.html"))
+var templates = template.Must(template.ParseFiles("templates/ascii-art.html",
+	"templates/index.html"))
+
+var fillings struct {
+	Text   string
+	Select struct {
+		Standard   string
+		Shadow     string
+		Thinkertoy string
+	}
+	Art []byte
+}
 
 func mainPageHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "templates/index.html")
+	templates.ExecuteTemplate(w, "index.html", fillings)
 }
 
 func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,13 +29,27 @@ func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
 	banner := r.FormValue("banner")
 	asciiArt, err := exec.Command("./ascii-art-web", text, banner).CombinedOutput()
 	if err != nil {
-		log.Println(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(string(asciiArt))
+		fillings.Art = asciiArt
+		http.Redirect(w, r, "/", http.StatusBadRequest)
+		return
 	}
-	err = templates.ExecuteTemplate(w, "ascii-art.html", asciiArt)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+	fillings.Text = text
+	selected := "selected"
+	switch banner {
+	case "standard":
+		fillings.Select.Standard = selected
+	case "shadow":
+		fillings.Select.Shadow = selected
+	case "thinkertoy":
+		fillings.Select.Thinkertoy = selected
 	}
+	fillings.Art = asciiArt
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/", http.StatusNotFound)
 }
 
 func main() {
@@ -34,6 +59,8 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", staticFileServer))
 
 	http.HandleFunc("POST /ascii-art/{$}", asciiArtPageHandler)
+
+	http.HandleFunc("/", invalidPathHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

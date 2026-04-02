@@ -58,3 +58,34 @@ button {
 button:hover {
     background: #0056b3;
 }
+
+/* Terminal screen */
+  .terminal {
+      background-color: #000;
+      color: white;
+      font-family: monospace;
+      margin: 30px;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 800px;
+      height: 495px;
+      overflow-y: auto;
+      white-space: pre; /* preserves formatting */
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  }
+
+  /* Optional blinking cursor */
+  .cursor {
+      display: inline-block;
+      width: 10px;
+      background-color: #00ff00;
+      margin-left: 5px;
+      animation: blink 1s steps(2, start) infinite;
+  }
+
+  @keyframes blink {
+      to {
+      visibility: visible;
+      }
+  }
