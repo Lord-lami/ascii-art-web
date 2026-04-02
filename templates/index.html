@@ -19,9 +19,9 @@
 
         <!-- Dropdown Select -->
         <select name="banner">
-            <option value="standard" {{.Select.Standard}}>Standard</option>
-            <option value="shadow" {{.Select.Shadow}}>Shadow</option>
-            <option value="thinkertoy" {{.Select.Thinkertoy}}>Thinkertoy</option>
+            {{range $i, $banner := .Banners -}}
+            <option value={{$banner}} {{if eq $.Selected $i}}selected{{end}}>{{$banner}}</option>
+            {{- end}}
         </select>
 
         <!-- Submit Button -->
@@ -29,10 +29,7 @@
 
     </form>
 </div>
-<div class="terminal">
-{{printf "%s" .Art}}
-<span class="cursor"></span>
-</div>
+{{template "ascii-art-web.html" .Art}}
 
 </body>
 </html>

@@ -3,21 +3,21 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
+	"slices"
+	"strings"
 	"text/template"
 )
 
-var templates = template.Must(template.ParseFiles("templates/ascii-art.html",
+var templates = template.Must(template.ParseFiles("templates/ascii-art-web.html",
 	"templates/index.html"))
 
 var fillings struct {
-	Text   string
-	Select struct {
-		Standard   string
-		Shadow     string
-		Thinkertoy string
-	}
-	Art []byte
+	Text     string
+	Banners  []string
+	Selected int
+	Art      []byte
 }
 
 func mainPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,26 +25,20 @@ func mainPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
-	text := r.FormValue("text")
+	fillings.Text = r.FormValue("text")
 	banner := r.FormValue("banner")
-	asciiArt, err := exec.Command("./ascii-art-web", text, banner).CombinedOutput()
+	fillings.Selected = slices.Index(fillings.Banners, banner)
+	if fillings.Selected == -1 {
+		http.Redirect(w, r, "/", http.StatusNotFound)
+		return
+	}
+	var err error
+	fillings.Art, err = exec.Command("./ascii-art-web", fillings.Text, banner).CombinedOutput()
 	if err != nil {
-		log.Println(string(asciiArt))
-		fillings.Art = asciiArt
+		log.Println(string(fillings.Art))
 		http.Redirect(w, r, "/", http.StatusBadRequest)
 		return
 	}
-	fillings.Text = text
-	selected := "selected"
-	switch banner {
-	case "standard":
-		fillings.Select.Standard = selected
-	case "shadow":
-		fillings.Select.Shadow = selected
-	case "thinkertoy":
-		fillings.Select.Thinkertoy = selected
-	}
-	fillings.Art = asciiArt
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
@@ -53,6 +47,15 @@ func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// Load the banners folder into the
+	// html banner select options
+	bannerDir, _ := os.ReadDir("banners")
+	for _, banner := range bannerDir {
+		bannerName := strings.TrimSuffix(banner.Name(), ".txt")
+		fillings.Banners = append(fillings.Banners, bannerName)
+	}
+	fillings.Selected = slices.Index(fillings.Banners, "standard")
+
 	http.HandleFunc("GET /{$}", mainPageHandler)
 
 	staticFileServer := http.FileServer(http.Dir("./static"))
