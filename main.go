@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"slices"
 	"strings"
 	"text/template"
@@ -24,22 +23,16 @@ func mainPageHandler(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "index.html", fillings)
 }
 
-func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
-	fillings.Text = r.FormValue("text")
-	banner := r.FormValue("banner")
-	fillings.Selected = slices.Index(fillings.Banners, banner)
-	if fillings.Selected == -1 {
-		http.Redirect(w, r, "/", http.StatusNotFound)
-		return
+// loadBanners loads the banner files
+// in the banner folder into the
+// fillings.Banners slice
+func loadBanners() {
+	bannerDir, _ := os.ReadDir("banners")
+	for _, banner := range bannerDir {
+		bannerName := strings.TrimSuffix(banner.Name(), ".txt")
+		fillings.Banners = append(fillings.Banners, bannerName)
 	}
-	var err error
-	fillings.Art, err = exec.Command("./ascii-art-web", fillings.Text, banner).CombinedOutput()
-	if err != nil {
-		log.Println(string(fillings.Art))
-		http.Redirect(w, r, "/", http.StatusBadRequest)
-		return
-	}
-	http.Redirect(w, r, "/", http.StatusFound)
+	fillings.Selected = slices.Index(fillings.Banners, "standard")
 }
 
 func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
@@ -47,15 +40,7 @@ func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// Load the banners folder into the
-	// html banner select options
-	bannerDir, _ := os.ReadDir("banners")
-	for _, banner := range bannerDir {
-		bannerName := strings.TrimSuffix(banner.Name(), ".txt")
-		fillings.Banners = append(fillings.Banners, bannerName)
-	}
-	fillings.Selected = slices.Index(fillings.Banners, "standard")
-
+	loadBanners()
 	http.HandleFunc("GET /{$}", mainPageHandler)
 
 	staticFileServer := http.FileServer(http.Dir("./static"))
