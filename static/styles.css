@@ -1,91 +1,195 @@
+/* Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Base = MOBILE FIRST */
 body {
     font-family: Arial, sans-serif;
     background: #f4f6f8;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    align-items: flex-start; /* mobile = top aligned */
+    min-height: 100vh;
+    padding: 10px;
+    /* Background image */
+    background-image: url('images/asciiartweb-bg.png');
+    background-repeat: no-repeat; /* don't tile */
+    background-size: cover;       /* cover entire screen */
+    background-position: center;  /* center the image */
 }
 
-/* Main container */
-.container {
-    background: blue;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    width: 300px;
-}
-
-
-
-h1, h2 {
+/* Heading */
+h1 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    color: black;
+    /* background-color: rgb(0, 150, 0); */
+    font-size: 1.2rem;
+    /* Neon border */
+    border: 3px solid black;
+    box-shadow: 0 0 10px black, 
+                0 0 20px black, 
+                0 0 30px black;
 }
 
-/* Inputs and select */
-input[type="text"],
+p {
+    color: black;
+    /* background-color: rgb(0, 150, 0); */
+}
+
+/* Inputs */
+textarea,
 select {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
+    margin: 8px 0;
     border-radius: 6px;
-}
-
-/* Radio buttons */
-.radio-group {
-    margin: 10px 0;
-}
-
-.radio-group label {
-    display: block;
-    margin-bottom: 5px;
+    font-size: 0.95rem;
+    background-color: black;
+    color: rgb(0, 150, 0);
+    border: none;
 }
 
 /* Button */
 button {
     width: 100%;
     padding: 10px;
-    background: #007BFF;
+    background: black;
     border: none;
-    color: white;
-    font-size: 16px;
+    color: rgb(0, 150, 0);
+    font-size: 1.1rem;
     border-radius: 6px;
     cursor: pointer;
 }
 
-button:hover {
-    background: #0056b3;
+footer {
+    background-color: black;
+    color: rgb(0, 150, 0);
+    width: 100%;             /* span the full width */
+    text-align: center;       /* center the text */
+    padding: 15px 0;          /* some vertical padding */
+    
+    /* Stick to bottom */
+    position: fixed;           /* fixed relative to viewport */
+    bottom: 0;                 /* bottom edge */
+    left: 0;                   /* align to left edge */
 }
 
-/* Terminal screen */
-  .terminal {
-      background-color: #000;
-      color: white;
-      font-family: monospace;
-      margin: 30px;
-      padding: 20px;
-      border-radius: 10px;
-      width: 80%;
-      max-width: 800px;
-      height: 495px;
-      overflow-y: auto;
-      white-space: pre; /* preserves formatting */
-      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-  }
+/* Wrapper (stacked by default) */
+.wrapper {
+    display: flex;
+    flex-direction: column; /* stack on mobile */
+    gap: 15px;
+    width: 100%;
+    max-width: 1200px;
+}
 
-  /* Optional blinking cursor */
-  .cursor {
-      display: inline-block;
-      width: 10px;
-      background-color: #00ff00;
-      margin-left: 5px;
-      animation: blink 1s steps(2, start) infinite;
-  }
+/* Container */
+.container {
+    background: rgb(0, 150, 0);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.849);
+    width: 100%;
 
-  @keyframes blink {
-      to {
-      visibility: visible;
-      }
-  }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Terminal */
+.terminal {
+    background-color: #000;
+    color: rgb(0, 150, 0);
+    font-family: monospace;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+    min-height: 250px;
+    max-height: 350px;
+    overflow-y: scroll;
+    white-space: pre;
+    font-size: 0.85rem;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    position: relative;
+    padding-bottom: 50px; /* space for the form */
+}
+
+/* Form positioned inside terminal */
+.terminal form {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: right;
+}
+
+/* Style form elements for compact horizontal layout */
+.terminal form button {
+    width: auto;
+}
+.terminal form select {
+    width: auto;
+    padding: 6px 8px;
+    font-size: 0.9rem;
+}
+
+/* ========================= */
+/* 📲 TABLET (768px and up) */
+/* ========================= */
+@media (min-width: 768px) {
+    body {
+        align-items: center; /* center again */
+    }
+
+    .wrapper {
+        flex-direction: row; /* side-by-side */
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: stretch;
+    }
+
+    .container {
+        max-width: 350px;
+        flex: 1 1 300px;
+        padding: 20px;
+    }
+
+    .terminal {
+        flex: 2 1 400px;
+        max-width: 700px;
+        max-height: 400px;
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+}
+
+/* ========================= */
+/* 💻 DESKTOP (1024px and up) */
+/* ========================= */
+@media (min-width: 1024px) {
+    .wrapper {
+        flex-wrap: nowrap; /* keep layout stable */
+    }
+
+    .terminal {
+        max-width: 800px;
+        max-height: 500px;
+        font-size: 1rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+}

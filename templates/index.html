@@ -1,35 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCII Art</title>
+<div class="wrapper">
+    <div class="container">
+        <h1><a href="/">-ASCII ART WEB-</a></h1>
+        <form action="/ascii-art/" method="POST">
+            
+            <!-- Text Input -->
+            <div><textarea name="text" rows="15" cols="40" placeholder="Write something..." required>{{.Text}}</textarea></div>
 
-    <!-- Link to external CSS -->
-    <link rel="stylesheet" href="/static/styles.css">
-</head>
-<body>
+            <!-- Dropdown Select -->
+            <select name="banner">
+                {{range $i, $banner := .Banners -}}
+                <option value={{$banner}} {{if eq $.Selected $i}}selected{{end}}>{{$banner}} font</option>
+                {{- end}}
+            </select>
 
-<div class="container">
-    <h1><a href="/">ASCII ART</a></h1>
-    <form action="/ascii-art/" method="POST">
-        
-        <!-- Text Input -->
-        <div><textarea name="text" rows="20" cols="40" placeholder="Enter text..." required>{{.Text}}</textarea></div>
+            <!-- Submit Button -->
+            <button type="submit"><strong>Print ASCII Art</strong></button>
 
-        <!-- Dropdown Select -->
-        <select name="banner">
-            {{range $i, $banner := .Banners -}}
-            <option value={{$banner}} {{if eq $.Selected $i}}selected{{end}}>{{$banner}}</option>
-            {{- end}}
-        </select>
-
-        <!-- Submit Button -->
-        <button type="submit">Get Art</button>
-
-    </form>
+        </form>
+    </div>
+    <div class="terminal">
+    <div>{{- printf "%s" .Art}}</div>
+        {{.DownloadButton}}
+    </div>
+    
 </div>
-{{template "ascii-art-web.html" .Art}}
-
-</body>
-</html>

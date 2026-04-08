@@ -8,19 +8,32 @@ import (
 )
 
 func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
-	fillings.Text = r.FormValue("text")
+	indexPageFillings.Text = r.FormValue("text")
 	banner := r.FormValue("banner")
-	fillings.Selected = slices.Index(fillings.Banners, banner)
-	if fillings.Selected == -1 || fillings.Text == "" {
-		http.Redirect(w, r, "/", http.StatusBadRequest)
+	indexPageFillings.Selected = slices.Index(indexPageFillings.Banners, banner)
+
+	if indexPageFillings.Selected == -1 || indexPageFillings.Text == "" {
+		log.Panicln("Banner", banner, "is not in the banners folder")
+		errorPage(w, http.StatusNotFound, "Banner Not Found",
+			"There is no "+banner+" banner font.")
 		return
 	}
+
 	var err error
-	fillings.Art, err = exec.Command("./ascii-art-web", fillings.Text, banner).CombinedOutput()
+	indexPageFillings.Art, err = exec.Command("./ascii-art-web", indexPageFillings.Text, banner).CombinedOutput()
+
 	if err != nil {
-		log.Println(string(fillings.Art))
-		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		log.Println(string(indexPageFillings.Art))
+		errorPage(w, http.StatusInternalServerError, "Invalid Input",
+			"None ASCII Characters are Invalid")
 		return
 	}
+	indexPageFillings.DownloadButton = `<form action="/export/" method="GET">
+	<select name="format">
+        <option value=text selected>txt</option>
+		<option value=pdf>pdf</option>
+    </select>
+	<button type="submit"><strong>📥 Download</strong></button>
+	</form>`
 	http.Redirect(w, r, "/", http.StatusFound)
 }

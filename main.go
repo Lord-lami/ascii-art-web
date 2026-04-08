@@ -9,34 +9,47 @@ import (
 	"text/template"
 )
 
-var templates = template.Must(template.ParseFiles("templates/ascii-art-web.html",
-	"templates/index.html"))
+var templates = template.Must(template.ParseFiles("templates/page.html",
+	"templates/index.html", "templates/error.html"))
 
-var fillings struct {
-	Text     string
-	Banners  []string
-	Selected int
-	Art      []byte
+var indexPageFillings struct {
+	Text           string
+	Banners        []string
+	Selected       int
+	Art            []byte
+	DownloadButton string
+}
+
+var page struct {
+	Meta    string
+	Title   string
+	Content string
 }
 
 func mainPageHandler(w http.ResponseWriter, r *http.Request) {
-	templates.ExecuteTemplate(w, "index.html", fillings)
+	page.Meta = ""
+	page.Title = "ASCII Art"
+	var pageContent strings.Builder
+	templates.ExecuteTemplate(&pageContent, "index.html", indexPageFillings)
+	page.Content = pageContent.String()
+
+	templates.ExecuteTemplate(w, "page.html", page)
 }
 
 // loadBanners loads the banner files
 // in the banner folder into the
-// fillings.Banners slice
+// indexPageFillings.Banners slice
 func loadBanners() {
 	bannerDir, _ := os.ReadDir("banners")
 	for _, banner := range bannerDir {
 		bannerName := strings.TrimSuffix(banner.Name(), ".txt")
-		fillings.Banners = append(fillings.Banners, bannerName)
+		indexPageFillings.Banners = append(indexPageFillings.Banners, bannerName)
 	}
-	fillings.Selected = slices.Index(fillings.Banners, "standard")
+	indexPageFillings.Selected = slices.Index(indexPageFillings.Banners, "standard")
 }
 
 func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/", http.StatusNotFound)
+	errorPage(w, http.StatusNotFound, "Not Found", "Incorrect URL: This page doesn't exist")
 }
 
 func main() {
@@ -47,6 +60,8 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", staticFileServer))
 
 	http.HandleFunc("POST /ascii-art/{$}", asciiArtPageHandler)
+
+	http.HandleFunc("GET /export/{$}", downloadHandler)
 
 	http.HandleFunc("/", invalidPathHandler)
 
