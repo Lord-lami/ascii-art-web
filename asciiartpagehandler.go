@@ -29,11 +29,7 @@ func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	indexPageFillings.DownloadButton = `<form action="/export/" method="GET">
-	<select name="format">
-        <option value=text selected>txt</option>
-		<option value=pdf>pdf</option>
-    </select>
-	<button type="submit"><strong>📥 Download</strong></button>
+	<button type="submit"><strong>📥 Download as text file</strong></button>
 	</form>`
 	http.Redirect(w, r, "/", http.StatusFound)
 }
