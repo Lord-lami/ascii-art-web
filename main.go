@@ -13,17 +13,21 @@ var templates = template.Must(template.ParseFiles("templates/page.html",
 	"templates/index.html", "templates/error.html"))
 
 var indexPageFillings struct {
-	Text           string
-	Banners        []string
-	Selected       int
-	Art            []byte
-	DownloadButton string
+	Text                string
+	ColorDetailsChanged bool
+	Color               string
+	ColoredText         string
+	Alignment          string
+	Banners             []string
+	Selected            int
+	Art                 []byte
+	DownloadButton      string
 }
 
 var page struct {
 	Meta    string
 	Title   string
-	Content string
+	Content *string
 }
 
 func mainPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -31,21 +35,24 @@ func mainPageHandler(w http.ResponseWriter, r *http.Request) {
 	page.Title = "ASCII Art"
 	var pageContent strings.Builder
 	templates.ExecuteTemplate(&pageContent, "index.html", indexPageFillings)
-	page.Content = pageContent.String()
+	*page.Content = pageContent.String()
 
 	templates.ExecuteTemplate(w, "page.html", page)
 }
 
-// loadBanners loads the banner files
+// loadDefaults loads the banner files
 // in the banner folder into the
 // indexPageFillings.Banners slice
-func loadBanners() {
+// and sets the default color for
+// indexPageFillings.Color
+func loadDefaults() {
 	bannerDir, _ := os.ReadDir("banners")
 	for _, banner := range bannerDir {
 		bannerName := strings.TrimSuffix(banner.Name(), ".txt")
 		indexPageFillings.Banners = append(indexPageFillings.Banners, bannerName)
 	}
 	indexPageFillings.Selected = slices.Index(indexPageFillings.Banners, "standard")
+	indexPageFillings.Color = "#ffffff"
 }
 
 func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +60,7 @@ func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	loadBanners()
+	loadDefaults()
 	http.HandleFunc("GET /{$}", mainPageHandler)
 
 	staticFileServer := http.FileServer(http.Dir("./static"))

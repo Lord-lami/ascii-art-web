@@ -17,6 +17,6 @@ func errorPage(w http.ResponseWriter, statusCode int, title, message string) {
 	page.Title = title
 	var pageContent strings.Builder
 	templates.ExecuteTemplate(&pageContent, "error.html", message)
-	page.Content = pageContent.String()
+	*page.Content = pageContent.String()
 	templates.ExecuteTemplate(w, "page.html", page)
 }

@@ -4,14 +4,32 @@
         <form action="/ascii-art/" method="POST">
             
             <!-- Text Input -->
-            <div><textarea name="text" rows="15" cols="40" placeholder="Write something..." required>{{.Text}}</textarea></div>
+            <div><textarea name="text" rows="5" placeholder="Write something..." required>{{.Text}}</textarea></div>
 
-            <!-- Dropdown Select -->
-            <select name="banner">
-                {{range $i, $banner := .Banners -}}
-                <option value={{$banner}} {{if eq $.Selected $i}}selected{{end}}>{{$banner}} font</option>
-                {{- end}}
-            </select>
+            <details {{if .ColorDetailsChanged}}open{{end}}>
+                <summary><span {{ printf "style=color:%s;" .Color}}>Color</span>{{ printf " %s" .ColoredText }}</summary>
+                <input name="color" type="color" value={{.Color}}>
+                <textarea name="colored-text" rows="5" placeholder="Copy or write the part of the text you want to color here. Leaving this empty colors the whole text...">{{.ColoredText}}</textarea>
+            </details>
+
+            <div class="horizontal">
+                <label>Align </label>
+                <select name="alignment">
+                    <option value="left" {{if eq .Alignment "left" }}selected{{end}}>Left</option>
+                    <option value="right" {{if eq .Alignment "right" }}selected{{end}}>Right</option>
+                    <option value="center" {{if eq .Alignment "center" }}selected{{end}}>Center</option>
+                    <option value="justify" {{if eq .Alignment "justify" }}selected{{end}}>Justify</option>
+                </select>
+            </div>
+
+            <div class="horizontal">
+                <label>Font  </label>
+                <select name="banner">
+                    {{range $i, $banner := .Banners -}}
+                    <option value={{$banner}} {{if eq $.Selected $i}}selected{{end}}>{{$banner}}</option>
+                    {{- end}}
+                </select>
+            </div>
 
             <!-- Submit Button -->
             <button type="submit"><strong>Print ASCII Art</strong></button>

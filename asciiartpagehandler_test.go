@@ -9,7 +9,7 @@ import (
 )
 
 func TestAsciiArtPageHandler(t *testing.T) {
-	loadBanners()
+	loadDefaults()
 
 	type record struct {
 		form     url.Values
