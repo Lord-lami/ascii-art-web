@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"log"
 	"net/http"
 	"os"
@@ -9,35 +10,42 @@ import (
 	"text/template"
 )
 
-var templates = template.Must(template.ParseFiles("templates/page.html",
-	"templates/index.html", "templates/error.html"))
+// Embedding
+//
+//go:embed templates/*.html
+var templatesFS embed.FS
+
+var templates = template.Must(template.ParseFS(templatesFS, "templates/*.html"))
 
 var indexPageFillings struct {
 	Text                string
 	ColorDetailsChanged bool
 	Color               string
 	ColoredText         string
-	Alignment          string
+	Alignment           string
 	Banners             []string
 	Selected            int
 	Art                 []byte
 	DownloadButton      string
 }
 
-var page struct {
+var layout struct {
 	Meta    string
 	Title   string
-	Content *string
+	Content string
 }
 
+// mainPageHandler handles the main page of the website
+// it populates the respective pipelines in the templates
+// with indePageFillings and puts the main page in the layout
 func mainPageHandler(w http.ResponseWriter, r *http.Request) {
-	page.Meta = ""
-	page.Title = "ASCII Art"
+	layout.Meta = ""
+	layout.Title = "ASCII Art"
 	var pageContent strings.Builder
 	templates.ExecuteTemplate(&pageContent, "index.html", indexPageFillings)
-	*page.Content = pageContent.String()
+	layout.Content = pageContent.String()
 
-	templates.ExecuteTemplate(w, "page.html", page)
+	templates.ExecuteTemplate(w, "layout.html", layout)
 }
 
 // loadDefaults loads the banner files
@@ -56,7 +64,7 @@ func loadDefaults() {
 }
 
 func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
-	errorPage(w, http.StatusNotFound, "Not Found", "Incorrect URL: This page doesn't exist")
+	errorPage(w, http.StatusNotFound, "Not Found", "Incorrect URL: This layout doesn't exist")
 }
 
 func main() {
@@ -71,6 +79,6 @@ func main() {
 	http.HandleFunc("GET /export/{$}", downloadHandler)
 
 	http.HandleFunc("/", invalidPathHandler)
-
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Server running on port 8080")
+	log.Println(http.ListenAndServe(":8080", nil))
 }
