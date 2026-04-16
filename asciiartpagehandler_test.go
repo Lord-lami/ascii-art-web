@@ -78,7 +78,7 @@ func TestAsciiArtPageHandler(t *testing.T) {
 	form.Add("text", "ABCD\nEFGH")
 	form.Add("color", "#ffffff")
 	form.Add("colored-text", "")
-	form.Add("alignment", "bad-alignment")
+	form.Add("alignment", "bad alignment")
 	form.Add("banner", "standard")
 	test.form = form
 	test.wantCode = http.StatusBadRequest

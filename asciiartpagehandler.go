@@ -31,7 +31,7 @@ func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
 	indexPageFillings.Color = r.FormValue("color")
 	hexColorRe := regexp.MustCompile(`^#[0-9a-fA-F]{6}$`)
 	if !hexColorRe.MatchString(indexPageFillings.Color) {
-		log.Println("Color:", indexPageFillings.Color, "is not a valid hex color")
+		log.Println("Color \"", indexPageFillings.Color+"\"", "is not a valid hex color")
 		errorPage(w, http.StatusBadRequest, "Invalid Color",
 			indexPageFillings.Color+" is an invalid color")
 		return
@@ -44,7 +44,7 @@ func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
 	switch indexPageFillings.Alignment {
 	case "", "left", "right", "center", "justify":
 	default:
-		log.Println("Alignment:", indexPageFillings.Alignment, "is not a valid alignment")
+		log.Println("Alignment \"", indexPageFillings.Alignment+"\"", "is not a valid alignment")
 		errorPage(w, http.StatusBadRequest, "Invalid Alignment",
 			indexPageFillings.Alignment+" is an invalid alignment")
 		return
@@ -54,7 +54,7 @@ func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
 	indexPageFillings.Selected = slices.Index(indexPageFillings.Banners, banner)
 
 	if indexPageFillings.Selected == -1 {
-		log.Println("Banner", banner, "is not in the banners folder")
+		log.Println("Banner \"", banner+"\"", "is not in the banners folder")
 		errorPage(w, http.StatusNotFound, "Banner Not Found",
 			"There is no "+banner+" banner font.")
 		return
