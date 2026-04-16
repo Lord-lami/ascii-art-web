@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// errorPage shows a page that redirects to the main page in 5 seconds 
+// with the passed parameters slotted in their necessary places
 func errorPage(w http.ResponseWriter, statusCode int, title, message string) {
 	if statusCode < 400 {
 		log.Println(statusCode, "is not an error code")

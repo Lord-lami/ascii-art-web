@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+// asciiArtPageHandler gets the values from the form,
+// validates them,
+// populates indexPageFillings and
+// redirects to the main page
 func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	if !r.Form.Has("text") || !r.Form.Has("color") || !r.Form.Has("colored-text") ||

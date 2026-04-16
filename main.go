@@ -63,6 +63,7 @@ func loadDefaults() {
 	indexPageFillings.Color = "#ffffff"
 }
 
+// invalidPathHandler shows a "page doesn't exist" redirecting page  
 func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
 	errorPage(w, http.StatusNotFound, "Not Found", "Incorrect URL: This page doesn't exist")
 }
@@ -71,6 +72,7 @@ func main() {
 	loadDefaults()
 	http.HandleFunc("GET /{$}", mainPageHandler)
 
+	// For CSS and favicon.ico
 	staticFileServer := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", staticFileServer))
 
@@ -79,6 +81,7 @@ func main() {
 	http.HandleFunc("GET /export/{$}", downloadHandler)
 
 	http.HandleFunc("/", invalidPathHandler)
+	
 	log.Println("Server running on port 8080")
 	log.Println(http.ListenAndServe(":8080", nil))
 }
