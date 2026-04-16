@@ -72,7 +72,9 @@ func asciiArtPageHandler(w http.ResponseWriter, r *http.Request) {
 		// Check that the log prints an invalid character error
 		// If it is a different type of error a new input validation
 		// must be added.
-		log.Println(string(indexPageFillings.Art))
+		log.Println(string(indexPageFillings.Art), err)
+		indexPageFillings.Art = []byte("Invalid ASCII Character(s) in \""+
+		indexPageFillings.Text+"\"")
 		errorPage(w, http.StatusInternalServerError, "Invalid Input",
 			"None ASCII Characters are Invalid")
 		return
