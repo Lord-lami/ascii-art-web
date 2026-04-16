@@ -79,6 +79,6 @@ func main() {
 	http.HandleFunc("GET /export/{$}", downloadHandler)
 
 	http.HandleFunc("/", invalidPathHandler)
-	log.Println("Server running on http://localhost:8080/")
+	log.Println("Server running on port 8080")
 	log.Println(http.ListenAndServe(":8080", nil))
 }
