@@ -64,7 +64,7 @@ func loadDefaults() {
 }
 
 func invalidPathHandler(w http.ResponseWriter, r *http.Request) {
-	errorPage(w, http.StatusNotFound, "Not Found", "Incorrect URL: This layout doesn't exist")
+	errorPage(w, http.StatusNotFound, "Not Found", "Incorrect URL: This page doesn't exist")
 }
 
 func main() {
@@ -79,6 +79,6 @@ func main() {
 	http.HandleFunc("GET /export/{$}", downloadHandler)
 
 	http.HandleFunc("/", invalidPathHandler)
-	log.Println("Server running on port 8080")
+	log.Println("Server running on http://localhost:8080/")
 	log.Println(http.ListenAndServe(":8080", nil))
 }

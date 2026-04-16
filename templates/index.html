@@ -27,7 +27,7 @@
                 <select name="banner">
                     {{range $i, $banner := .Banners -}}
                     <option value={{$banner}} {{if eq $.Selected $i}}selected{{end}}>{{$banner}}</option>
-                    {{- end}}
+                    {{end -}}
                 </select>
             </div>
 
