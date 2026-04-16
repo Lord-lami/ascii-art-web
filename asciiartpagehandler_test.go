@@ -21,6 +21,9 @@ func TestAsciiArtPageHandler(t *testing.T) {
 	// 1st test - normal input
 	form := url.Values{}
 	form.Add("text", "ABCD\nEFGH")
+	form.Add("color", "#ffffff")
+	form.Add("colored-text", "")
+	form.Add("alignment", "left")
 	form.Add("banner", "standard")
 	test.form = form
 	test.wantCode = http.StatusFound
@@ -29,26 +32,70 @@ func TestAsciiArtPageHandler(t *testing.T) {
 	// 2nd test - bad banner
 	form = url.Values{}
 	form.Add("text", "ABCD\nEFGH")
+	form.Add("color", "#ffffff")
+	form.Add("colored-text", "")
+	form.Add("alignment", "left")
 	form.Add("banner", "bad banner")
 	test.form = form
-	test.wantCode = http.StatusBadRequest
+	test.wantCode = http.StatusNotFound
 	tests = append(tests, test)
 
 	// 3rd test - empty text
 	form = url.Values{}
 	form.Add("text", "")
+	form.Add("color", "#ffffff")
+	form.Add("colored-text", "")
+	form.Add("alignment", "left")
 	form.Add("banner", "standard")
 	test.form = form
 	test.wantCode = http.StatusBadRequest
 	tests = append(tests, test)
 
-	// 4th test - non-ASCII text
+	// 4th test - bad color
+	form = url.Values{}
+	form.Add("text", "ABCD\nEFGH")
+	form.Add("color", "gold")
+	form.Add("colored-text", "")
+	form.Add("alignment", "left")
+	form.Add("banner", "standard")
+	test.form = form
+	test.wantCode = http.StatusBadRequest
+	tests = append(tests, test)
+
+	// 5th test - non-ASCII colored-text
+	form = url.Values{}
+	form.Add("text", "ABCD\nEFGH")
+	form.Add("color", "#ffffff")
+	form.Add("colored-text", "❌")
+	form.Add("alignment", "left")
+	form.Add("banner", "standard")
+	test.form = form
+	test.wantCode = http.StatusFound
+	tests = append(tests, test)
+
+	// 6th test - bad alignment
+	form = url.Values{}
+	form.Add("text", "ABCD\nEFGH")
+	form.Add("color", "#ffffff")
+	form.Add("colored-text", "")
+	form.Add("alignment", "bad-alignment")
+	form.Add("banner", "standard")
+	test.form = form
+	test.wantCode = http.StatusBadRequest
+	tests = append(tests, test)
+
+	// 7th test - non-ASCII text
 	form = url.Values{}
 	form.Add("text", "❌")
+	form.Add("color", "#ffffff")
+	form.Add("colored-text", "")
+	form.Add("alignment", "left")
 	form.Add("banner", "standard")
 	test.form = form
 	test.wantCode = http.StatusInternalServerError
 	tests = append(tests, test)
+
+	
 
 	for _, test := range tests {
 		req := httptest.NewRequest("POST", "/ascii-art", strings.NewReader(test.form.Encode()))
@@ -59,7 +106,7 @@ func TestAsciiArtPageHandler(t *testing.T) {
 		// body, _ := io.ReadAll(result.Body)
 
 		if result.StatusCode != test.wantCode {
-			t.Errorf("expected 301 got %d", result.StatusCode)
+			t.Errorf("expected %d got %d", test.wantCode, result.StatusCode)
 		}
 	}
 
