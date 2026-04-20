@@ -15,12 +15,21 @@ I hope to be able to make this program the starting point for a deterministic im
 - `git clone https://github.com/Lord-lami/ascii-art-web.git`
 
 ## Usage
+
+### With Terminal
+
 - Change directory to the `ascii-art-web` folder
 - To run the web server
 - - Run `./bin/ascii-art-web` on your terminal to launch the web interface on port 8080
 - - On your browser go to http://localhost:8080/
 - To run the command line interface
 - - Run `./bin/ascii-art-full sample-text` on your terminal
+
+### With Docker
+- Change directory to the `ascii-art-web` folder
+- To run the web server
+- - Run `./dockerize.sh`
+- - On your browser go to http://localhost:8080/
 
 ## Demo
 After running `./bin/ascii-art-web`
