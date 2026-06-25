@@ -1,5 +1,5 @@
 # ASCII Art Web
-Ascii Art Fill is a website written in Go Language, HTML and CSS that draws the ASCII art of the ASCII text you pass to its text box. It can also color and align the text. Its output can also be downloaded as a text file.
+Ascii Art Web is a website written in Go Language, HTML and CSS that draws the ASCII art of the ASCII text you pass to its text box. It can also color and align the text. Its output can also be downloaded as a text file.
 
 It uses only the standard libraries of Go language. 
 
